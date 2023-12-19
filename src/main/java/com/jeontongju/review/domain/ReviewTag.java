@@ -22,7 +22,7 @@ public class ReviewTag {
     @ManyToOne(targetEntity = Review.class, fetch = FetchType.LAZY)
     private Review reviewId;
 
-    @Column(name = "productId", nullable = false)
+    @Column(name = "product_id", nullable = false)
     private String productId;
 
     @Enumerated(EnumType.STRING)
