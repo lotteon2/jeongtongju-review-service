@@ -28,5 +28,5 @@ public class CreateReviewDto {
 
   private String reviewPhotoImageUrl;
 
-  private List<ConceptTypeEnum> conceptList;
+  private List<ConceptTypeEnum> concept;
 }

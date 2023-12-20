@@ -1,5 +1,6 @@
 package com.jeontongju.review.exception.advice;
 
+import com.jeontongju.review.exception.common.CustomFailureException;
 import com.jeontongju.review.exception.common.DomainException;
 import com.jeontongju.review.exception.common.InvalidPermissionException;
 import io.github.bitbox.bitbox.dto.ResponseFormat;
@@ -35,6 +36,21 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
             .message(status.name())
             .detail(e.getMessage())
             .build();
+
+    return ResponseEntity.status(status.value()).body(body);
+  }
+
+  @ExceptionHandler(CustomFailureException.class)
+  public ResponseEntity<ResponseFormat<Void>> handleCustomFailureException(CustomFailureException e) {
+    log.error("{PRODUCT}", e.getMessage());
+    HttpStatus status = HttpStatus.OK;
+    ResponseFormat<Void> body =
+            ResponseFormat.<Void>builder()
+                    .code(status.value())
+                    .message(status.name())
+                    .detail(e.getMessage())
+                    .failure(e.getFailure())
+                    .build();
 
     return ResponseEntity.status(status.value()).body(body);
   }
