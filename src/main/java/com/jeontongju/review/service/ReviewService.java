@@ -4,9 +4,12 @@ import com.jeontongju.review.client.ConsumerServiceClient;
 import com.jeontongju.review.client.OrderServiceClient;
 import com.jeontongju.review.client.ProductServiceClient;
 import com.jeontongju.review.domain.Review;
+import com.jeontongju.review.domain.ReviewSympathy;
+import com.jeontongju.review.domain.ReviewSympathyId;
 import com.jeontongju.review.domain.ReviewTag;
 import com.jeontongju.review.dto.request.CreateReviewDto;
 import com.jeontongju.review.enums.ConceptTypeEnum;
+import com.jeontongju.review.exception.ReviewNotFoundException;
 import com.jeontongju.review.exception.common.CustomFailureException;
 import com.jeontongju.review.kafka.ReviewProducer;
 import com.jeontongju.review.mapper.ReviewMapper;
@@ -68,5 +71,25 @@ public class ReviewService {
     }
 
     reviewProducer.updateReviewPoint(reviewMapper.toPointUpdateDto(memberId, createReviewDto));
+  }
+
+  @Transactional
+  public void reviewSympathy(Long memberId, Long reviewId) {
+
+    ReviewSympathyId reviewSympathyId =
+        ReviewSympathyId.builder().consumerId(memberId).reviewId(reviewId).build();
+
+    if (reviewSympathyRepository.existsById(reviewSympathyId)) {
+      reviewSympathyRepository.deleteById(reviewSympathyId);
+    } else {
+      ReviewSympathy reviewSympathy =
+          ReviewSympathy.builder()
+              .id(reviewSympathyId)
+              .reviewId(
+                  reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new))
+              .build();
+
+      reviewSympathyRepository.save(reviewSympathy);
+    }
   }
 }
