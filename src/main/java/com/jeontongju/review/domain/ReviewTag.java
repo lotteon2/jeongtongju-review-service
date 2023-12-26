@@ -20,7 +20,7 @@ public class ReviewTag {
 
     @JoinColumn(name = "review_id")
     @ManyToOne(targetEntity = Review.class, fetch = FetchType.LAZY)
-    private Review reviewId;
+    private Review review;
 
     @Column(name = "product_id", nullable = false)
     private String productId;

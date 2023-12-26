@@ -3,12 +3,11 @@ package com.jeontongju.review.service;
 import com.jeontongju.review.client.ConsumerServiceClient;
 import com.jeontongju.review.client.OrderServiceClient;
 import com.jeontongju.review.client.ProductServiceClient;
-import com.jeontongju.review.domain.Review;
 import com.jeontongju.review.domain.ReviewSympathy;
 import com.jeontongju.review.domain.ReviewSympathyId;
-import com.jeontongju.review.domain.ReviewTag;
 import com.jeontongju.review.dto.request.CreateReviewDto;
-import com.jeontongju.review.enums.ConceptTypeEnum;
+import com.jeontongju.review.dto.response.GetMyReviewDto;
+import com.jeontongju.review.dto.response.GetReviewDto;
 import com.jeontongju.review.exception.ReviewNotFoundException;
 import com.jeontongju.review.exception.common.CustomFailureException;
 import com.jeontongju.review.kafka.ReviewProducer;
@@ -20,6 +19,8 @@ import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
 import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,22 +54,9 @@ public class ReviewService {
     ConsumerNameImageDto consumerNameImageDto =
         consumerServiceClient.getConsumerNameImage(memberId).getData();
 
-    Review review =
+    reviewRepository.save(
         reviewMapper.toReviewEntity(
-            createReviewDto, memberId, productImageUrl, consumerNameImageDto);
-
-    Review savedReview = reviewRepository.save(review);
-
-    if (createReviewDto.getConcept().size() != 0) {
-      for (ConceptTypeEnum concept : createReviewDto.getConcept()) {
-        reviewTagRepository.save(
-            ReviewTag.builder()
-                .reviewId(savedReview)
-                .productId(createReviewDto.getProductId())
-                .name(concept)
-                .build());
-      }
-    }
+            createReviewDto, memberId, productImageUrl, consumerNameImageDto));
 
     reviewProducer.updateReviewPoint(reviewMapper.toPointUpdateDto(memberId, createReviewDto));
   }
