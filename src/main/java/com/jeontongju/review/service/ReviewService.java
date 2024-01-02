@@ -17,7 +17,6 @@ import com.jeontongju.review.mapper.ReviewMapper;
 import com.jeontongju.review.repository.ReviewRepository;
 import com.jeontongju.review.repository.ReviewSympathyRepository;
 import com.jeontongju.review.repository.ReviewTagRepository;
-import com.jeontongju.review.repository.querydsl.ReviewCustomRepository;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
 import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import java.util.ArrayList;
