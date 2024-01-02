@@ -4,6 +4,8 @@ import com.jeontongju.review.domain.common.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,6 +40,10 @@ public class Review extends BaseEntity {
 
     @Column(name = "product_thumbnail_image", nullable = false)
     private String productThumbnailImage;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "review", cascade = CascadeType.PERSIST)
+    private List<ReviewTag> reviewTag = new ArrayList<>();
 
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)

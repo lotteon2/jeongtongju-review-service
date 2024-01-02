@@ -46,7 +46,7 @@ public class ReviewRepositoryTest {
     for (ConceptTypeEnum concept : conceptTypeEnumList) {
       ReviewTag reviewTag =
           ReviewTag.builder()
-              .reviewId(review)
+              .review(review)
               .productId(review.getProductId())
               .name(concept)
               .build();
@@ -132,7 +132,7 @@ public class ReviewRepositoryTest {
 
       ReviewTag reviewTag =
           ReviewTag.builder()
-              .reviewId(review)
+              .review(review)
               .productId(review.getProductId())
               .name(concept)
               .build();
