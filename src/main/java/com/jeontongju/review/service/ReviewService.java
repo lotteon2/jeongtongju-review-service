@@ -17,12 +17,10 @@ import com.jeontongju.review.mapper.ReviewMapper;
 import com.jeontongju.review.repository.ReviewRepository;
 import com.jeontongju.review.repository.ReviewSympathyRepository;
 import com.jeontongju.review.repository.ReviewTagRepository;
-import com.jeontongju.review.repository.querydsl.ReviewCustomRepository;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
+import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -46,7 +44,6 @@ public class ReviewService {
   private final OrderServiceClient orderServiceClient;
   private final ReviewMapper reviewMapper;
   private final ReviewProducer reviewProducer;
-  private final ReviewCustomRepository reviewCustomRepository;
 
   @Transactional
   public void createReview(Long memberId, CreateReviewDto createReviewDto) {
