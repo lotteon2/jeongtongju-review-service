@@ -75,6 +75,8 @@ public class ReviewService {
 
     if (reviewSympathyRepository.existsById(reviewSympathyId)) {
       reviewSympathyRepository.deleteById(reviewSympathyId);
+      Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+      review.setSympathy(review.getSympathy() - 1);
     } else {
       ReviewSympathy reviewSympathy =
           ReviewSympathy.builder()
@@ -84,6 +86,8 @@ public class ReviewService {
               .build();
 
       reviewSympathyRepository.save(reviewSympathy);
+      Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewNotFoundException::new);
+      review.setSympathy(review.getSympathy() + 1);
     }
   }
 
@@ -118,7 +122,7 @@ public class ReviewService {
     return GetReviewDto.builder()
         .representativeReview(
             reviewTagRepository.findNameByProductId(productId, PageRequest.of(0, 2)))
-        .content(new PageImpl<>(reviewContentsDtoList, pageable, reviewList.getTotalElements()))
+        .histories(new PageImpl<>(reviewContentsDtoList, pageable, reviewList.getTotalElements()))
         .build();
   }
 }
