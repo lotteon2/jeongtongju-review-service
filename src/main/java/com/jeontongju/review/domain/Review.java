@@ -55,4 +55,16 @@ public class Review extends BaseEntity {
   public void setSympathy(Long sympathy) {
     this.sympathy = sympathy;
   }
+
+  public void setProfileImageUrl(String profileImageUrl) {
+    this.profileImageUrl = profileImageUrl;
+  }
+
+  public void setProductThumbnailImage(String productThumbnailImage) {
+    this.productThumbnailImage = productThumbnailImage;
+  }
+
+  public void setDeleted(Boolean deleted) {
+    isDeleted = deleted;
+  }
 }
