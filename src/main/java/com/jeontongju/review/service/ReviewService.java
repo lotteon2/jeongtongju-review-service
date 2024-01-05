@@ -112,6 +112,8 @@ public class ReviewService {
               .reviewId(r.getReviewId())
               .name(r.getName())
               .profileImageUrl(r.getProfileImageUrl())
+              .reviewContents(r.getContents())
+              .reviewPhotoImageUrl(r.getImageUrl())
               .reviewSympathyCount(reviewSympathyRepository.countByReviewId(r))
               .concept(reviewTagRepository.findNameByReviewId(r.getReviewId()))
               .createdAt(r.getCreatedAt())
