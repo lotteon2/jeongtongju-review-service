@@ -10,6 +10,8 @@ import com.jeontongju.review.dto.request.CreateReviewDto;
 import com.jeontongju.review.dto.response.GetMyReviewDto;
 import com.jeontongju.review.dto.response.GetReviewDto;
 import com.jeontongju.review.dto.response.ReviewContentsDto;
+import com.jeontongju.review.dynamodb.domian.ProductMetrics;
+import com.jeontongju.review.dynamodb.repository.ProductMetricsRepository;
 import com.jeontongju.review.exception.ReviewNotFoundException;
 import com.jeontongju.review.exception.common.CustomFailureException;
 import com.jeontongju.review.kafka.ReviewProducer;
@@ -40,6 +42,7 @@ public class ReviewService {
   private final ReviewRepository reviewRepository;
   private final ReviewSympathyRepository reviewSympathyRepository;
   private final ReviewTagRepository reviewTagRepository;
+  private final ProductMetricsRepository productMetricsRepository;
   private final ProductServiceClient productServiceClient;
   private final ConsumerServiceClient consumerServiceClient;
   private final OrderServiceClient orderServiceClient;
@@ -66,6 +69,19 @@ public class ReviewService {
             createReviewDto, memberId, productImageUrl, consumerNameImageDto));
 
     reviewProducer.updateReviewPoint(reviewMapper.toPointUpdateDto(memberId, createReviewDto));
+
+    if (productMetricsRepository.existsById(createReviewDto.getProductId())) {
+      ProductMetrics productMetrics =
+          productMetricsRepository.findById(createReviewDto.getProductId()).get();
+
+      productMetricsRepository.save(
+          ProductMetrics.builder()
+              .productId(createReviewDto.getProductId())
+              .sellerId(productMetrics.getSellerId())
+              .reviewCount(productMetrics.getReviewCount() + 1)
+              .totalSalesCount(productMetrics.getTotalSalesCount())
+              .build());
+    }
   }
 
   @Transactional
