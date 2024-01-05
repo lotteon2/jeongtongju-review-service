@@ -18,6 +18,7 @@ import com.jeontongju.review.repository.ReviewRepository;
 import com.jeontongju.review.repository.ReviewSympathyRepository;
 import com.jeontongju.review.repository.ReviewTagRepository;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
+import io.github.bitbox.bitbox.dto.ProductImageInfoDto;
 import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,5 +125,26 @@ public class ReviewService {
             reviewTagRepository.findNameByProductId(productId, PageRequest.of(0, 2)))
         .histories(new PageImpl<>(reviewContentsDtoList, pageable, reviewList.getTotalElements()))
         .build();
+  }
+
+  @Transactional
+  public void updateReviewByProduct(ProductImageInfoDto productImageInfoDto) {
+    reviewRepository.findByProductId(productImageInfoDto.getProductId()).stream()
+        .forEach(
+            review ->
+                review.setProductThumbnailImage(productImageInfoDto.getProductThumbnailImageUrl()));
+  }
+
+  @Transactional
+  public void updateReviewByConsumer(ConsumerNameImageDto consumerNameImageDto) {
+    reviewRepository.findByName(consumerNameImageDto.getName()).stream()
+        .forEach(review -> review.setProfileImageUrl(consumerNameImageDto.getImageUrl()));
+  }
+
+  @Transactional
+  public void deleteReview(List<String> productIds) {
+    productIds.stream()
+        .forEach(
+            id -> reviewRepository.findByProductId(id).forEach(review -> review.setDeleted(true)));
   }
 }
