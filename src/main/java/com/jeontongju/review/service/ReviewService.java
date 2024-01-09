@@ -11,6 +11,7 @@ import com.jeontongju.review.dto.response.GetMyReviewDto;
 import com.jeontongju.review.dto.response.GetReviewDto;
 import com.jeontongju.review.dto.response.ReviewContentsDto;
 import com.jeontongju.review.dynamodb.domian.ProductMetrics;
+import com.jeontongju.review.dynamodb.domian.ProductMetricsId;
 import com.jeontongju.review.dynamodb.repository.ProductMetricsRepository;
 import com.jeontongju.review.exception.ReviewNotFoundException;
 import com.jeontongju.review.exception.common.CustomFailureException;
@@ -22,6 +23,7 @@ import com.jeontongju.review.repository.ReviewTagRepository;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
 import io.github.bitbox.bitbox.dto.ProductImageInfoDto;
 import io.github.bitbox.bitbox.enums.FailureTypeEnum;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -70,18 +72,19 @@ public class ReviewService {
 
     reviewProducer.updateReviewPoint(reviewMapper.toPointUpdateDto(memberId, createReviewDto));
 
-    if (productMetricsRepository.existsById(createReviewDto.getProductId())) {
-      ProductMetrics productMetrics =
-          productMetricsRepository.findById(createReviewDto.getProductId()).get();
-
-      productMetricsRepository.save(
-          ProductMetrics.builder()
-              .productId(createReviewDto.getProductId())
-              .sellerId(productMetrics.getSellerId())
-              .reviewCount(productMetrics.getReviewCount() + 1)
-              .totalSalesCount(productMetrics.getTotalSalesCount())
-              .build());
-    }
+    productMetricsRepository.save(
+        ProductMetrics.builder()
+            .productMetricsId(
+                ProductMetricsId.builder()
+                    .productId(createReviewDto.getProductId())
+                    .createdAt(LocalDateTime.now().toString())
+                    .build())
+            .action("CREATE_REVIEW")
+            .reviewCount(1L)
+            .sellerId(null)
+            .totalSalesCount(0L)
+            .totalSalesPrice(0L)
+            .build());
   }
 
   @Transactional
@@ -115,7 +118,8 @@ public class ReviewService {
   public GetReviewDto getProductReview(String productId, Long memberId, Pageable pageable) {
     List<ReviewContentsDto> reviewContentsDtoList = new ArrayList<>();
 
-    Page<Review> reviewList = reviewRepository.findByProductId(productId, pageable);
+    Page<Review> reviewList =
+        reviewRepository.findByProductIdAndIsDeleted(productId, false, pageable);
     Boolean isSympathy = false;
     for (Review r : reviewList) {
       if (memberId != null) {
@@ -147,7 +151,7 @@ public class ReviewService {
 
   @Transactional
   public void updateReviewByProduct(ProductImageInfoDto productImageInfoDto) {
-    reviewRepository.findByProductId(productImageInfoDto.getProductId()).stream()
+    reviewRepository.findByProductIdAndIsDeleted(productImageInfoDto.getProductId(), false).stream()
         .forEach(
             review ->
                 review.setProductThumbnailImage(productImageInfoDto.getProductThumbnailImageUrl()));
@@ -163,6 +167,9 @@ public class ReviewService {
   public void deleteReview(List<String> productIds) {
     productIds.stream()
         .forEach(
-            id -> reviewRepository.findByProductId(id).forEach(review -> review.setDeleted(true)));
+            id ->
+                reviewRepository
+                    .findByProductIdAndIsDeleted(id, false)
+                    .forEach(review -> review.setDeleted(true)));
   }
 }

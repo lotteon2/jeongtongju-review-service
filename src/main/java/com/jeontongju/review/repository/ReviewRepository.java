@@ -16,7 +16,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
       "select new com.jeontongju.review.dto.response.GetMyReviewDto(r.reviewId, r.productId, r.productThumbnailImage, r.contents, r.imageUrl, r.createdAt) from Review r where r.isDeleted = false and r.consumerId = :memberId")
   Page<GetMyReviewDto> findMyReviewByConsumerId(Long memberId, Pageable pageable);
 
-  Page<Review> findByProductId(String productId, Pageable pageable);
-  List<Review> findByProductId(String productId);
+  Page<Review> findByProductIdAndIsDeleted(String productId, Boolean isDeleted, Pageable pageable);
+  List<Review> findByProductIdAndIsDeleted(String productId, Boolean isDeleted);
   List<Review> findByName(String name);
 }
