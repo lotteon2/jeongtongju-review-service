@@ -79,7 +79,7 @@ public class ReviewRestController {
       @RequestHeader(required = false) Long memberId,
       @RequestHeader(required = false) MemberRoleEnum memberRole,
       @PathVariable String productId,
-      @PageableDefault(page = 0, sort = "createdAt", direction = Sort.Direction.DESC, size = 10)
+      @PageableDefault(page = 0, sort = "sympathy", direction = Sort.Direction.DESC, size = 10)
           Pageable pageable) {
 
     return ResponseEntity.ok()

@@ -14,5 +14,5 @@ import org.springframework.data.domain.Page;
 @Builder
 public class GetReviewDto {
   private List<ConceptTypeEnum> representativeReview;
-  private Page<ReviewContentsDto> content;
+  private Page<ReviewContentsDto> histories;
 }
