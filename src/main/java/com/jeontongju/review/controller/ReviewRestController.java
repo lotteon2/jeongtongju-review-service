@@ -3,6 +3,7 @@ package com.jeontongju.review.controller;
 import com.jeontongju.review.dto.request.CreateReviewDto;
 import com.jeontongju.review.dto.response.GetMyReviewDto;
 import com.jeontongju.review.dto.response.GetReviewDto;
+import com.jeontongju.review.dto.response.GetSellerReviewDto;
 import com.jeontongju.review.service.ReviewService;
 import io.github.bitbox.bitbox.dto.ResponseFormat;
 import io.github.bitbox.bitbox.enums.MemberRoleEnum;
@@ -15,6 +16,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api")
 @RestController
@@ -74,21 +77,38 @@ public class ReviewRestController {
                 .build());
   }
 
-  @GetMapping("/products/{productId}/reviews")
-  public ResponseEntity<ResponseFormat<GetReviewDto>> getProductReview(
+  @GetMapping("/sellers/reviews")
+  public ResponseEntity<ResponseFormat<List<GetSellerReviewDto>>> getSellerProductReview(
       @RequestHeader(required = false) Long memberId,
       @RequestHeader(required = false) MemberRoleEnum memberRole,
-      @PathVariable String productId,
-      @PageableDefault(page = 0, sort = "sympathy", direction = Sort.Direction.DESC, size = 10)
+      @PageableDefault(page = 0, sort = "sympathy", direction = Sort.Direction.DESC, size = 4)
           Pageable pageable) {
 
     return ResponseEntity.ok()
         .body(
-            ResponseFormat.<GetReviewDto>builder()
+            ResponseFormat.<List<GetSellerReviewDto>>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.name())
-                .detail("상품 리뷰 조회 성공")
-                .data(reviewService.getProductReview(productId, memberId, pageable))
+                .detail("대시보드-셀러-리뷰 조회")
+                .data(reviewService.getSellerProductReview(memberId, pageable))
                 .build());
+  }
+
+  @GetMapping("/products/{productId}/reviews")
+  public ResponseEntity<ResponseFormat<GetReviewDto>> getProductReview(
+          @RequestHeader(required = false) Long memberId,
+          @RequestHeader(required = false) MemberRoleEnum memberRole,
+          @PathVariable String productId,
+          @PageableDefault(page = 0, sort = "sympathy", direction = Sort.Direction.DESC, size = 10)
+          Pageable pageable) {
+
+    return ResponseEntity.ok()
+            .body(
+                    ResponseFormat.<GetReviewDto>builder()
+                            .code(HttpStatus.OK.value())
+                            .message(HttpStatus.OK.name())
+                            .detail("상품 리뷰 조회 성공")
+                            .data(reviewService.getProductReview(productId, memberId, pageable))
+                            .build());
   }
 }

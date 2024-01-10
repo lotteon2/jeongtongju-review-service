@@ -6,6 +6,7 @@ import com.jeontongju.review.dto.request.CreateReviewDto;
 import com.jeontongju.review.enums.ConceptTypeEnum;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
 import io.github.bitbox.bitbox.dto.PointUpdateDto;
+import io.github.bitbox.bitbox.dto.SellerProductInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ public class ReviewMapper {
   public Review toReviewEntity(
       CreateReviewDto createReviewDto,
       Long memberId,
-      String productImageUrl,
+      SellerProductInfoDto sellerProductInfoDto,
       ConsumerNameImageDto consumerNameImageDto) {
 
     Review review =
@@ -27,7 +28,8 @@ public class ReviewMapper {
             .imageUrl(createReviewDto.getReviewPhotoImageUrl())
             .name(consumerNameImageDto.getName())
             .profileImageUrl(consumerNameImageDto.getImageUrl())
-            .productThumbnailImage(productImageUrl)
+            .sellerId(sellerProductInfoDto.getSellerId())
+            .productThumbnailImage(sellerProductInfoDto.getProductImageUrl())
             .build();
 
     if (createReviewDto.getConcept().size() != 0) {

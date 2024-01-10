@@ -9,6 +9,7 @@ import com.jeontongju.review.domain.ReviewSympathyId;
 import com.jeontongju.review.dto.request.CreateReviewDto;
 import com.jeontongju.review.dto.response.GetMyReviewDto;
 import com.jeontongju.review.dto.response.GetReviewDto;
+import com.jeontongju.review.dto.response.GetSellerReviewDto;
 import com.jeontongju.review.dto.response.ReviewContentsDto;
 import com.jeontongju.review.dynamodb.domian.ProductMetrics;
 import com.jeontongju.review.dynamodb.domian.ProductMetricsId;
@@ -22,6 +23,7 @@ import com.jeontongju.review.repository.ReviewSympathyRepository;
 import com.jeontongju.review.repository.ReviewTagRepository;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
 import io.github.bitbox.bitbox.dto.ProductImageInfoDto;
+import io.github.bitbox.bitbox.dto.SellerProductInfoDto;
 import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -60,15 +62,15 @@ public class ReviewService {
       throw new CustomFailureException(FailureTypeEnum.NOT_ORDER_CONFIRM);
     }
 
-    String productImageUrl =
-        productServiceClient.getProductImage(createReviewDto.getProductId()).getData();
+    SellerProductInfoDto sellerProductInfoDto =
+        productServiceClient.getProductSeller(createReviewDto.getProductId()).getData();
 
     ConsumerNameImageDto consumerNameImageDto =
         consumerServiceClient.getConsumerNameImage(memberId).getData();
 
     reviewRepository.save(
         reviewMapper.toReviewEntity(
-            createReviewDto, memberId, productImageUrl, consumerNameImageDto));
+            createReviewDto, memberId, sellerProductInfoDto, consumerNameImageDto));
 
     reviewProducer.updateReviewPoint(reviewMapper.toPointUpdateDto(memberId, createReviewDto));
 
@@ -171,5 +173,26 @@ public class ReviewService {
                 reviewRepository
                     .findByProductIdAndIsDeleted(id, false)
                     .forEach(review -> review.setDeleted(true)));
+  }
+
+  public List<GetSellerReviewDto> getSellerProductReview(Long memberId, Pageable pageable) {
+
+    List<GetSellerReviewDto> sellerReviewDtoList = new ArrayList<>();
+    Page<Review> reviewList = reviewRepository.findBySellerId(memberId, pageable);
+
+    for (Review review : reviewList) {
+      sellerReviewDtoList.add(
+          GetSellerReviewDto.builder()
+              .reviewId(review.getReviewId())
+              .name(review.getName())
+              .profileImageUrl(review.getProfileImageUrl())
+              .reviewContents(review.getContents())
+              .reviewPhotoImageUrl(review.getImageUrl())
+              .concept(reviewTagRepository.findNameByReviewId(review.getReviewId()))
+              .reviewSympathyCount(review.getSympathy())
+              .createdAt(review.getCreatedAt())
+              .build());
+    }
+    return sellerReviewDtoList;
   }
 }

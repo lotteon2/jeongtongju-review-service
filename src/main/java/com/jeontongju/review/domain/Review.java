@@ -25,6 +25,9 @@ public class Review extends BaseEntity {
   @Column(name = "consumer_id", nullable = false)
   private Long consumerId;
 
+  @Column(name = "seller_id", nullable = false)
+  private Long sellerId;
+
   @Column(name = "contents", nullable = false, columnDefinition = "TEXT")
   private String contents;
 
