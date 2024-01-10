@@ -22,7 +22,6 @@ public class CreateReviewDto {
   @NotNull(message = "null 이 불가합니다.")
   private Long productOrderId;
 
-  @Size(min = 1, max = 1000, message = "내용은 1글자 이상 1000 글자 이하만 입력 가능합니다.")
   @NotBlank(message = "null 이 불가합니다.")
   private String reviewContents;
 
