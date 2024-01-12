@@ -23,7 +23,6 @@ import com.jeontongju.review.repository.ReviewSympathyRepository;
 import com.jeontongju.review.repository.ReviewTagRepository;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
 import io.github.bitbox.bitbox.dto.ProductImageInfoDto;
-import io.github.bitbox.bitbox.dto.ReviewDto;
 import io.github.bitbox.bitbox.dto.SellerProductInfoDto;
 import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import java.time.LocalDateTime;
@@ -58,8 +57,8 @@ public class ReviewService {
   public void createReview(Long memberId, CreateReviewDto createReviewDto) {
 
     if (!orderServiceClient
-            .isOrderProductConfirmed(createReviewDto.getProductOrderId())
-            .getData()) {
+        .isOrderProductConfirmed(createReviewDto.getProductOrderId())
+        .getData()) {
       throw new CustomFailureException(FailureTypeEnum.NOT_ORDER_CONFIRM);
     }
 
@@ -89,8 +88,6 @@ public class ReviewService {
             .totalSalesCount(0L)
             .totalSalesPrice(0L)
             .build());
-
-
   }
 
   @Transactional
@@ -140,6 +137,7 @@ public class ReviewService {
               .name(r.getName())
               .profileImageUrl(r.getProfileImageUrl())
               .reviewContents(r.getContents())
+              .productThumbnailImage(r.getProductThumbnailImage())
               .reviewPhotoImageUrl(r.getImageUrl())
               .reviewSympathyCount(reviewSympathyRepository.countByReviewId(r))
               .concept(reviewTagRepository.findNameByReviewId(r.getReviewId()))
