@@ -17,6 +17,7 @@ public class ReviewContentsDto {
   private String name;
   private String profileImageUrl;
   private String reviewContents;
+  private String productThumbnailImage;
   private String reviewPhotoImageUrl;
   private List<ConceptTypeEnum> concept;
   private Long reviewSympathyCount;
