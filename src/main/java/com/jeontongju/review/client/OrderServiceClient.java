@@ -12,5 +12,5 @@ public interface OrderServiceClient {
 
   @CircuitBreaker(name = "OrderServiceClient@isOrderProductConfirmed")
   @GetMapping("/product-orders/{productOrderId}/review-verify")
-  FeignFormat<ReviewDto> isOrderProductConfirmed(@PathVariable Long productOrderId);
+  FeignFormat<Boolean> isOrderProductConfirmed(@PathVariable Long productOrderId);
 }
