@@ -57,10 +57,9 @@ public class ReviewService {
   @Transactional
   public void createReview(Long memberId, CreateReviewDto createReviewDto) {
 
-    ReviewDto reviewDto = orderServiceClient
+    if (!orderServiceClient
             .isOrderProductConfirmed(createReviewDto.getProductOrderId())
-            .getData();
-    if (!reviewDto.getReviewWriteFlag()) {
+            .getData()) {
       throw new CustomFailureException(FailureTypeEnum.NOT_ORDER_CONFIRM);
     }
 
@@ -75,7 +74,7 @@ public class ReviewService {
             createReviewDto, memberId, sellerProductInfoDto, consumerNameImageDto));
 
     reviewProducer.updateReviewPoint(reviewMapper.toPointUpdateDto(memberId, createReviewDto));
-    reviewProducer.updateProductOrderReviewStatus(reviewDto.getProductOrderId());
+    reviewProducer.updateProductOrderReviewStatus(createReviewDto.getProductOrderId());
 
     productMetricsRepository.save(
         ProductMetrics.builder()
@@ -90,6 +89,8 @@ public class ReviewService {
             .totalSalesCount(0L)
             .totalSalesPrice(0L)
             .build());
+
+
   }
 
   @Transactional
