@@ -14,4 +14,8 @@ public class ReviewProducer<T> {
   public void updateReviewPoint(T pointUpdateDto) {
     kafkaTemplate.send(KafkaTopicNameInfo.UPDATE_REVIEW_POINT, pointUpdateDto);
   }
+
+  public void updateProductOrderReviewStatus(T productOrderId) {
+    kafkaTemplate.send(KafkaTopicNameInfo.PRODUCT_ORDER_REVIEW_WRITE_STATUS_UPDATE, productOrderId);
+  }
 }
