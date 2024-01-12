@@ -23,6 +23,7 @@ import com.jeontongju.review.repository.ReviewSympathyRepository;
 import com.jeontongju.review.repository.ReviewTagRepository;
 import io.github.bitbox.bitbox.dto.ConsumerNameImageDto;
 import io.github.bitbox.bitbox.dto.ProductImageInfoDto;
+import io.github.bitbox.bitbox.dto.ReviewDto;
 import io.github.bitbox.bitbox.dto.SellerProductInfoDto;
 import io.github.bitbox.bitbox.enums.FailureTypeEnum;
 import java.time.LocalDateTime;
@@ -56,9 +57,10 @@ public class ReviewService {
   @Transactional
   public void createReview(Long memberId, CreateReviewDto createReviewDto) {
 
-    if (!orderServiceClient
-        .isOrderProductConfirmed(createReviewDto.getProductOrderId())
-        .getData()) {
+    ReviewDto reviewDto = orderServiceClient
+            .isOrderProductConfirmed(createReviewDto.getProductOrderId())
+            .getData();
+    if (!reviewDto.getReviewWriteFlag()) {
       throw new CustomFailureException(FailureTypeEnum.NOT_ORDER_CONFIRM);
     }
 
@@ -73,6 +75,7 @@ public class ReviewService {
             createReviewDto, memberId, sellerProductInfoDto, consumerNameImageDto));
 
     reviewProducer.updateReviewPoint(reviewMapper.toPointUpdateDto(memberId, createReviewDto));
+    reviewProducer.updateProductOrderReviewStatus(reviewDto.getProductOrderId());
 
     productMetricsRepository.save(
         ProductMetrics.builder()
