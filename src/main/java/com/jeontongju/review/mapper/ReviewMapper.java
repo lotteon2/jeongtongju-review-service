@@ -50,7 +50,11 @@ public class ReviewMapper {
 
     return PointUpdateDto.builder()
         .consumerId(consumerId)
-        .point(createReviewDto.getReviewPhotoImageUrl() == null ? 300L : 500L)
+        .point(
+            createReviewDto.getReviewPhotoImageUrl() == null
+                    || createReviewDto.getReviewPhotoImageUrl().isEmpty()
+                ? 300L
+                : 500L)
         .build();
   }
 }
